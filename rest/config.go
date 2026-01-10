@@ -57,8 +57,12 @@ func (c *Config) String() string {
 	return fmt.Sprintf("%#v", *cc)
 }
 
+// TLSClientConfig contains settings to enable transport layer security
+// for the clientcmd.
 type TLSClientConfig struct {
-	Insecure   bool
+	Insecure bool
+	// ServerName is used to verify the hostname on the returned
+	// certificates unless Insecure is true.
 	ServerName string
 	CertFile   string
 	KeyFile    string
@@ -67,6 +71,13 @@ type TLSClientConfig struct {
 	KeyData    []byte
 	CAData     []byte
 	NextProtos []string
+}
+
+// AddUserAgent add a http user-agent to the config.
+func AddUserAgent(config *Config, userAgent string) *Config {
+	fullUserAgent := userAgent
+	config.UserAgent = fullUserAgent
+	return config
 }
 
 // CopyConfig returns a copy of the given config.

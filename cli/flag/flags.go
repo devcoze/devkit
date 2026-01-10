@@ -1,9 +1,12 @@
 package flag
 
 import (
+	"strings"
+
+	goflag "flag"
+
 	"github.com/devcoze/devkit/log"
 	"github.com/spf13/pflag"
-	"strings"
 )
 
 // WordSepNormalizeFunc changes all flags that contain "_" separators.
@@ -23,4 +26,17 @@ func WarnWordSepNormalizeFunc(f *pflag.FlagSet, name string) pflag.NormalizedNam
 		return pflag.NormalizedName(nname)
 	}
 	return pflag.NormalizedName(name)
+}
+
+// InitFlags normalizes, parses, then logs the command line flags.
+func InitFlags(flags *pflag.FlagSet) {
+	flags.SetNormalizeFunc(WordSepNormalizeFunc)
+	flags.AddGoFlagSet(goflag.CommandLine)
+}
+
+// PrintFlags logs the flags in the flagset.
+func PrintFlags(flags *pflag.FlagSet) {
+	flags.VisitAll(func(flag *pflag.Flag) {
+		log.Debugf("FLAG: --%s=%q", flag.Name, flag.Value)
+	})
 }
